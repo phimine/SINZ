@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.funion.modules.sys.dao.DepartmentDao">
+
+<select id="departmentOfInstitution"  parameterType="int" resultType="cn.funion.modules.sys.entity.wapperDto.DepartmentDto">
+  SELECT
+    dep.department_id as departmentId,
+    dep.department_name as departmentName,
+    depAdd.street_address1 as departmentAddressStreetAddress1,
+    depAdd.street_address2 as departmentAddressStreetAddress2,
+    depAdd.town as departmentAddressTown,
+    depAdd.region as departmentAddressRegion,
+    depAdd.postcode as departmentAddressPostcode,
+    depAdd.phone as departmentAddressPhone,
+    depAdd.email as departmentAddressEmail,
+    depAdd.website as departmentAddressWebsit
+    from department dep
+    LEFT JOIN department_address depAdd on dep.department_id = depAdd.department_id
+    where dep._status=0 and depAdd._status=0
+    and dep.institution_id=#{institutionId}#
+</select>
+
+
+</mapper>

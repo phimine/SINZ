@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.funion.modules.sys.dao.ScholarshipDao">
+
+    <select id="pageScholarship" parameterType="Map"
+            resultType="cn.funion.modules.sys.entity.wapperDto.ScholarshipDto">
+
+        SELECT
+        ship.scholarship_id as scholarshipId,
+        ship.provider_id as institutionId,
+        ship.scholarship_title as scholarshipTitle,
+        ship.study_level as studyLevel,
+        ship.area_of_study as areaOfStudy,
+        ship.area_of_study_code as areaOfStudyCode,
+        ship.subject_of_study as subjectOfStudy,
+        ship.subject_of_study_code as subjectOfStudyCode,
+        ship.level3_subjects as level3Subjects,
+        ship.level3_subjects_code as level3SubjectsCode,
+        ship.scholarship_value as scholarshipValue,
+        ship.scholarship_value_description as scholarshipValueDescription,
+        ship.scholarship_value_duration as scholarshipValueDuration,
+        ship.number_of_awards as numberOfAwards,
+        ship.nationality as nationality,
+        ship.application_deadline_date as applicationDeadlineDate,
+        ship.how_to_apply as howToApply,
+        ship.eligibility_criteria as eligibilityCriteria,
+        ship.link_to_providers_website as linkToProvidersWebsite,
+        inst.institution_type as institutionType,
+        inst.institution_name as institutionName,
+        insEx.description as institutionExtraInfoDesc,
+        inst.website as institutionWebsite,
+        (SELECT m.media_path from institution_media m where m.institution_id=ship.provider_id and m._status=0
+        and m.media_type='institution_logo' limit 1)  as institutionMediaMediaPath
+        from scholarship ship
+        LEFT JOIN institution inst on ship.provider_id = inst.institution_id
+        LEFT JOIN institution_extra_info insEx on ship.provider_id=insEx.institution_id
+        where ship._status=0 and inst._status=0 and insEx._status=0
+        <if test="institutionId !=null and institutionId !=''">
+            and ship.provider_id=#{institutionId}
+        </if>
+        <if test="institutionType !=null and institutionType !=''">
+            and inst.institution_type=#{institutionType}
+        </if>
+        <if test="areaOfStudy !=null and areaOfStudy !=''">
+            and ship.area_of_study =#{areaOfStudy}
+        </if>
+        <if test="nationality !=null and nationality !=''">
+            and ship.nationality=#{nationality}
+        </if>
+        <if test="studyLevel !=null and studyLevel !=''">
+            and ship.study_level=#{studyLevel}
+        </if>
+        <if test="subjectOfStudy !=null and subjectOfStudy !=''">
+            and ship.subject_of_study=#{subjectOfStudy}
+        </if>
+        <if test="orderType == 'asc'">
+            ORDER BY inst.institution_name   asc
+        </if>
+        <if test="orderType == 'desc'">
+            ORDER BY inst.institution_name   desc
+        </if>
+
+     LIMIT #{courrentIndex},#{pageSize}
+
+    </select>
+
+    <select id="countScholarship" parameterType="Map" resultType="int">
+        SELECT
+       count(*)
+        from scholarship ship
+        LEFT JOIN institution inst on ship.provider_id = inst.institution_id
+        LEFT JOIN institution_extra_info insEx on ship.provider_id=insEx.institution_id
+        where ship._status=0 and inst._status=0 and insEx._status=0
+        <if test="institutionId !=null and institutionId !=''">
+            and ship.provider_id=#{institutionId}
+        </if>
+        <if test="institutionType !=null and institutionType !=''">
+            and inst.institution_type=#{institutionType}
+        </if>
+        <if test="areaOfStudy !=null and areaOfStudy !=''">
+            and ship.area_of_study =#{areaOfStudy}
+        </if>
+        <if test="nationality !=null and nationality !=''">
+            and ship.nationality=#{nationality}
+        </if>
+        <if test="studyLevel !=null and studyLevel !=''">
+            and ship.study_level=#{studyLevel}
+        </if>
+        <if test="subjectOfStudy !=null and subjectOfStudy !=''">
+            and ship.subject_of_study=#{subjectOfStudy}
+        </if>
+
+    </select>
+
+
+</mapper>

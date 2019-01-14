@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.funion.modules.sys.dao.InstitutionDao">
+
+    <select id="queryInstitutionInfoByIds"
+            resultType="cn.funion.modules.sys.entity.wapperDto.InstitutionDto">
+        SELECT
+            ins.institution_id as institutionId,
+            ins.institution_name as institutionType,
+            ins.institution_type as institutionType,
+            ins.website,
+            insex.description as institutionExtraInfoDesc,
+            insme.media_path as institutionMediaMediaPath
+            from institution ins
+            LEFT JOIN institution_media insme ON ins.institution_id = insme.institution_id
+            LEFT JOIN institution_extra_info insex on ins.institution_id = insex.institution_id
+            where ins._status=0 and insme._status=0 and insex._status =0 and ins.institution_type != 'Agent'
+            and insme.media_type ='institution_logo'
+            and  ins.institution_id in
+        <foreach collection="list" item="institutionId" index="index"
+                 open="(" close=")" separator=",">
+            #{institutionId}
+        </foreach>
+    </select>
+    <select id="pageInstitutions" parameterType="Map"  resultType="cn.funion.modules.sys.entity.wapperDto.InstitutionDto" >
+        SELECT
+        t.institutionId,
+        t.institutionType,
+        t.institutionName,
+        t.institutionName,
+        t.institutionWebsite,
+        t.institutionExtraInfoDesc,
+        t.institutionAddRegion,
+        (SELECT m.media_path from institution_media m where m.institution_id=t.institutionId and m._status=0
+        and m.media_type='institution_logo' limit 1)  as institutionMediaMediaPath
+        FROM
+        (
+        SELECT DISTINCT
+        ins.institution_id AS institutionId,
+        ins.institution_type AS institutionType,
+        ins.institution_name AS institutionName,
+        insex.description AS institutionExtraInfoDesc,
+        insadd.region as institutionAddRegion,
+        ins.website AS institutionWebsite
+
+        FROM
+        institution ins
+        LEFT JOIN institution_extra_info insex ON ins.institution_id = insex.institution_id
+        LEFT JOIN institution_address insadd ON ins.institution_id = insadd.institution_id
+        LEFT JOIN campus cam ON ins.institution_id = cam.institution_id
+        LEFT JOIN opportunity opp ON cam.campus_id = opp.campus_id
+        LEFT JOIN course cou ON opp.course_id = cou.course_id
+        WHERE
+        ins._status = 0
+        AND insex._status = 0
+        AND insadd._status = 0
+        AND ins.institution_type != 'Agent'
+        AND opp._status = 0
+        AND cam._status = 0
+        AND cou._del_status = 0
+        <if test="institutionTpe != null and institutionTpe != ''">
+            and ins.institution_type=#{institutionType}
+        </if>
+        <if test="institutionAddRegion != null and institutionAddRegion != ''">
+            and insadd.region=#{institutionAddRegion}
+        </if>
+        <if test="licensedImmigrationAgent != null and licensedImmigrationAgent != ''">
+            and ins.licensed_immigration_agent=#{licensedImmigrationAgent}
+        </if>
+        <if test="studyMode != null and studyMode != ''">
+            and opp.study_mode=#{studyMode}
+        </if>
+        <if test="orderType == 'asc'">
+            ORDER BY ins.institution_name   asc
+        </if>
+        <if test="orderType == 'desc'">
+            ORDER BY ins.institution_name   desc
+        </if>
+        <if test="orderDateType != null and orderDateType != ''">
+            order by ins.last_updated_date desc
+        </if>
+) t        LIMIT #{courrentIndex},#{pageSize}
+    </select>
+    <select id="countInstitutions" parameterType="Map" resultType="int">
+        SELECT
+        count(*)
+        FROM
+        (
+        SELECT DISTINCT
+        ins.institution_id AS institutionId
+        FROM
+        institution ins
+        LEFT JOIN institution_extra_info insex ON ins.institution_id = insex.institution_id
+
+        LEFT JOIN institution_address insadd ON ins.institution_id = insadd.institution_id
+        LEFT JOIN campus cam ON ins.institution_id = cam.institution_id
+        LEFT JOIN opportunity opp ON cam.campus_id = opp.campus_id
+        LEFT JOIN course cou ON opp.course_id = cou.course_id
+        WHERE
+        ins._status = 0
+        AND insex._status = 0
+        AND insadd._status = 0
+        AND ins.institution_type != 'Agent'
+        AND opp._status = 0
+        AND cam._status = 0
+        AND cou._del_status = 0
+        <if test="institutionType != null and institutionType != ''">
+            and ins.institution_type=#{institutionType}
+        </if>
+        <if test="institutionAddRegion != null and institutionAddRegion != ''">
+            and insadd.region=#{institutionAddRegion}
+        </if>
+        <if test="licensedImmigrationAgent != null and licensedImmigrationAgent != ''">
+            and ins.licensed_immigration_agent=#{licensedImmigrationAgent}
+        </if>
+        <if test="studyMode != null and studyMode != ''">
+            and opp.study_mode=#{studyMode}
+        </if>
+) t
+    </select>
+    <select id="queryInstitutionInfoById" parameterType="int"  resultType="cn.funion.modules.sys.entity.wapperDto.InstitutionDto">
+        SELECT
+        insti.institution_id as institutionId,
+        insti.institution_name as  institutionName,
+        insti.institution_type as institutionType,
+        insEx.description as institutionExtraInfoDesc,
+        insAdd.region as institutionAddRegion,
+        insti.website as institutionWebsite,
+        insPr.profile_summary as institutionProfileSummary,
+        insAdd.street_address1 as institutionAddressStreetAddress1,
+        insAdd.town as institutionAddressTown,
+        insAdd.phone as institutionAddressPhone,
+        insAdd.postcode as institutionAddressPostcode,
+        insEx.accommodation as institutionExtraInfoAccommodation,
+        insEx.gender as institutionExtraInfoGender,
+        insEx.on_site_religious_facilities as institutionExtraInfoOnSiteReligiousFacilities,
+        insEx.number_of_students as institutionExtraInfoNumberOfStudents,
+        insEx.number_of_international_students as institutionExtraInfoNumberOfIntStudents
+
+        FROM institution insti
+        LEFT JOIN institution_address insAdd on insti.institution_id = insAdd.institution_id
+        LEFT JOIN institution_extra_info insEx on insti.institution_id = insEx.institution_id
+        LEFT JOIN institution_profile insPr on insti.institution_id =  insPr.institution_id
+        where insti._status=0 and insAdd._status=0 and insEx._status=0 and insPr._status=0 and insti.institution_type != 'Agent'
+        and insti.institution_id=#{InstitutionId}#
+
+    </select>
+    <select id="countAgent" parameterType="Map" resultType="int">
+        SELECT
+          count(*)
+        FROM institution agent
+        LEFT JOIN institution_address agentAdd on agent.institution_id=agentAdd.institution_id
+        LEFT JOIN institution_extra_info agentEx on agent.institution_id=agentEx.institution_id
+        where agent._status=0 and agentAdd._status=0 and agentEx._status=0 and agent.institution_type='Agent'
+        <if test="country != null and country != ''">
+            and agentAdd.country=#{country}
+        </if>
+        <if test="town != null and town != ''">
+            and agentAdd.town=#{town}
+        </if>
+        <if test="licensedImmigrationAgent != null and licensedImmigrationAgent != ''">
+            and agent.licensed_immigration_agent=#{licensedImmigrationAgent}
+        </if>
+    </select>
+    <select id="pageAgent" parameterType="Map" resultType="cn.funion.modules.sys.entity.wapperDto.AgentDto">
+        SELECT
+        agent.institution_id as institutionId,
+        agent.institution_name as institutionName,
+        agent.institution_type as institutionType,
+        agentEx.description as institutionExtraInfoDesc,
+        agentAdd.region as institutionAddRegion,
+        agent.website as institutionWebsite,
+        agent.licensed_immigration_agent as licensedImmigrationAgent,
+        agentAdd.street_address1 as institutionAddressStreetAddress1,
+        (SELECT m.media_path from institution_media m where m.institution_id=agent.institution_id and m._status=0
+        and m.media_type='institution_logo' limit 1)  as institutionMediaMediaPath,
+        agentAdd.postcode as institutionAddressPostcode
+        FROM institution agent
+        LEFT JOIN institution_address agentAdd on agent.institution_id=agentAdd.institution_id
+        LEFT JOIN institution_extra_info agentEx on agent.institution_id=agentEx.institution_id
+        where agent._status=0 and agentAdd._status=0 and agentEx._status=0 and agent.institution_type='Agent'
+        <if test="country != null and country != ''">
+            and agentAdd.country=#{country}
+        </if>
+        <if test="town != null and town != ''">
+            and agentAdd.town=#{town}
+        </if>
+        <if test="licensedImmigrationAgent != null and licensedImmigrationAgent != ''">
+            and agent.licensed_immigration_agent=#{licensedImmigrationAgent}
+        </if>
+        <if test="orderType == 'asc'">
+            ORDER BY agent.institution_name   asc
+        </if>
+        <if test="orderType == 'desc'">
+            ORDER BY agent.institution_name   desc
+        </if>
+        <if test="orderDateType != null and orderDateType != ''">
+            order by agent.last_updated_date desc
+        </if>
+        LIMIT #{courrentIndex},#{pageSize}
+
+    </select>
+
+</mapper>

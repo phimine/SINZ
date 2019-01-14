@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.funion.modules.sys.dao.MemberDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.funion.modules.sys.entity.MemberEntity" id="memberMap">
+        <result property="id" column="id"/>
+        <result property="memberFirstName" column="member_first_name"/>
+        <result property="memberLastName" column="member_last_name"/>
+        <result property="memberEmail" column="member_email"/>
+        <result property="memberMobile" column="member_mobile"/>
+        <result property="memberPersonType" column="member_person_type"/>
+        <result property="studentNationality" column="student_nationality"/>
+        <result property="studentCountryOfResidence" column="student_country_of_residence"/>
+        <result property="studentHighestLevelOfStudy" column="student_highest_level_of_study"/>
+        <result property="studentGender" column="student_gender"/>
+        <result property="studentFirstName" column="student_first_name"/>
+        <result property="studentLastName" column="student_last_name"/>
+        <result property="studentdob" column="studentDOB"/>
+        <result property="intendedInstitutionType" column="intended_institution_type"/>
+        <result property="intendedLevelOfStudy" column="intended_level_of_study"/>
+        <result property="intendedAreaOfStudy" column="intended_area_of_study"/>
+        <result property="intendedSubjectOfStudy" column="intended_subject_of_study"/>
+        <result property="intendedStartDate" column="intended_start_date"/>
+        <result property="annualTuitionBudget" column="annual_tuition_budget"/>
+        <result property="preferredLocalityType" column="preferred_locality_type"/>
+        <result property="tester" column="tester"/>
+        <result property="permissionHowTo" column="permission_how_to"/>
+        <result property="permissionNews" column="permission_news"/>
+        <result property="permissionLocal" column="permission_local"/>
+        <result property="permissionInspire" column="permission_inspire"/>
+        <result property="permissionAlert" column="permission_alert"/>
+        <result property="visaProgress" column="visa_progress"/>
+        <result property="privacyPolicyAgreed" column="privacy_policy_agreed"/>
+        <result property="inzMatchingPermission" column="inz_matching_permission"/>
+        <result property="language" column="language"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="weChatOpenId" column="we_chat_open_id"/>
+        <result property="wxNickname" column="wx_nickname"/>
+        <result property="wxFollowedStatus" column="wx_followed_status"/>
+        <result property="wxFollowedDate" column="wx_followed_date"/>
+        <result property="weChatGroup" column="we_chat_group"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+        <result property="source" column="source"/>
+        <result property="matched" column="matched"/>
+        <result property="memberId" column="member_id"/>
+        <result property="englishLevel" column="english_level"/>
+        <result property="updatedDate" column="_updated_date"/>
+        <result property="updatedBy" column="_updated_by"/>
+        <result property="createdDate" column="_created_date"/>
+        <result property="status" column="_status"/>
+        <result property="createdBy" column="_created_by"/>
+        <result property="weChatUnionId" column="we_chat_union_id"/>
+        <result property="gzhOpenId" column="gzh_open_id"/>
+        <result property="wechatAppletScene" column="wechat_applet_scene"/>
+        <result property="intendedFundingSource" column="intended_funding_source"/>
+        <result property="agentUse" column="agent_use"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="country" column="country"/>
+    </resultMap>
+
+
+</mapper>
